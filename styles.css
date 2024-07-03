@@ -1,0 +1,220 @@
+:root {
+    --primary-color: #00ffff;
+    --secondary-color: #ff00ff;
+    --background-color: #0a0a1a;
+    --text-color: #00ffff;
+    --input-bg: rgba(255, 255, 255, 0.1);
+    --box-bg: rgba(20, 20, 40, 0.8);
+}
+
+:root.light-theme {
+    --primary-color: #008080;
+    --secondary-color: #800080;
+    --background-color: #f0f0f0;
+    --text-color: #333333;
+    --input-bg: rgba(0, 0, 0, 0.1);
+    --box-bg: rgba(255, 255, 255, 0.8);
+}
+
+body {
+    font-family: 'Orbitron', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: var(--box-bg);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+h1, h2, h3 {
+    color: var(--primary-color);
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+form {
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+input, select, button {
+    padding: 10px;
+    border: none;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border-radius: 5px;
+}
+
+button {
+    background-color: var(--primary-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: var(--secondary-color);
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin-bottom: 20px;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    background-color: var(--input-bg);
+}
+
+th {
+    background-color: var(--primary-color);
+    color: var(--background-color);
+    cursor: pointer;
+}
+
+#salesChart {
+    margin-top: 20px;
+    background-color: var(--box-bg);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+#loginForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+#loginForm input {
+    margin-bottom: 10px;
+    width: 200px;
+}
+
+#dashboardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#userInfo {
+    font-size: 1.2em;
+    color: var(--text-color);
+}
+
+#searchInputs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+#searchInputs input {
+    width: calc(100% / 8 - 10px);
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.toggle-button {
+    width: 48%;
+    padding: 10px;
+    background-color: var(--primary-color);
+    color: var(--background-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.toggle-button:hover {
+    background-color: var(--secondary-color);
+}
+
+#analysisSection, #salesDetailsSection {
+    display: none;
+}
+
+.period-analysis {
+    margin-top: 20px;
+    background-color: var(--input-bg);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.period-analysis h3 {
+    color: var(--primary-color);
+    margin-top: 0;
+}
+
+#theme-toggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    z-index: 1001;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+
+#theme-toggle:hover {
+    background-color: var(--input-bg);
+}
+
+.date-filter {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.date-filter input {
+    flex: 1;
+}
+
+.stock-tables {
+    display: flex;
+    flex-direction: column;
+}
+
+.stock-table {
+    width: 100%;
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+
+.stock-table table {
+    width: 100%;
+    min-width: 300px;
+}
+
+@media (min-width: 768px) {
+    .stock-tables {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .stock-table {
+        width: 48%;
+    }
+}
