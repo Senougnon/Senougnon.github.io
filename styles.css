@@ -263,3 +263,49 @@ tbody tr:hover {
         width: 48%;
     }
 }
+/* Styles pour l'icône de suppression */
+.delete-icon {
+    display: none;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    cursor: pointer;
+    color: var(--secondary-color);
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+.delete-icon:hover {
+    color: var(--primary-color);
+}
+
+/* Ajoutez cette règle pour rendre les cellules du tableau relatives */
+#salesTable tbody td {
+    position: relative;
+}
+
+/* Afficher l'icône de suppression au survol de la ligne */
+#salesTable tbody tr:hover .delete-icon {
+    display: block;
+}
+
+/* Style pour la boîte de dialogue de confirmation */
+.confirm-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--box-bg);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    z-index: 1000;
+}
+
+.confirm-dialog p {
+    margin-bottom: 20px;
+}
+
+.confirm-dialog button {
+    margin-right: 10px;
+}
