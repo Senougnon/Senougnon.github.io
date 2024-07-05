@@ -214,11 +214,77 @@ function updateStockTables() {
     });
 }
 
+// Fonction pour supprimer une entrée et actualiser les données
+function deleteEntry(key) {
+    database.ref(`sales/${currentUser}/${key}`).once('value')
+        .then((snapshot) => {
+            const deletedEntry = snapshot.val();
+            return database.ref(`sales/${currentUser}/${key}`).remove()
+                .then(() => {
+                    console.log("Entrée supprimée avec succès");
+                    return updateStockAfterDeletion(deletedEntry);
+                });
+        })
+        .then(() => {
+            // Mettre à jour l'interface utilisateur
+            return updateTable();
+        })
+        .then(() => {
+            updateStockTables();
+            updateAnalysis();
+        })
+        .catch((error) => {
+            console.error("Erreur lors de la suppression de l'entrée:", error);
+        });
+}
+
+// Fonction pour mettre à jour le stock après une suppression
+function updateStockAfterDeletion(deletedEntry) {
+    return database.ref(`sales/${currentUser}`)
+        .orderByChild('dateTime')
+        .endAt(deletedEntry.dateTime)
+        .limitToLast(2)
+        .once('value')
+        .then((snapshot) => {
+            let entries = [];
+            snapshot.forEach((childSnapshot) => {
+                entries.push({key: childSnapshot.key, ...childSnapshot.val()});
+            });
+            entries.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+
+            if (entries.length > 1 && entries[0].key !== deletedEntry.key) {
+                const previousEntry = entries[1];
+                const newStockFinal = previousEntry.SF + deletedEntry.V - deletedEntry.APP;
+                
+                return database.ref(`sales/${currentUser}/${previousEntry.key}`).update({SF: newStockFinal});
+            }
+            return Promise.resolve();
+        });
+}
+
+// Modifier la fonction updateTable pour utiliser les données de Firebase
+function updateTable() {
+    return database.ref(`sales/${currentUser}`).once('value').then((snapshot) => {
+        salesData = [];
+        snapshot.forEach((childSnapshot) => {
+            const entry = childSnapshot.val();
+            entry.key = childSnapshot.key;
+            entry.total = (entry.V * entry.PV).toFixed(2);
+            salesData.push(entry);
+        });
+        renderTable(salesData);
+        setupSearch();
+        setupSort(salesTable);
+    });
+}
+
+// Modifier la fonction renderTable pour utiliser la clé Firebase
 function renderTable(data) {
     const tbody = salesTable.querySelector('tbody');
     tbody.innerHTML = '';
     data.forEach((entry) => {
         const row = tbody.insertRow();
+        row.dataset.key = entry.key;
         row.insertCell(0).textContent = new Date(entry.dateTime).toLocaleString();
         row.insertCell(1).textContent = entry.product;
         row.insertCell(2).textContent = entry.SI;
@@ -228,6 +294,42 @@ function renderTable(data) {
         row.insertCell(6).textContent = entry.PV;
         row.insertCell(7).textContent = entry.total;
     });
+    addDeleteIcons();
+}
+
+// Modifier la fonction addDeleteIcons pour utiliser la clé Firebase
+function addDeleteIcons() {
+    const rows = salesTable.querySelectorAll('tbody tr');
+    rows.forEach((row) => {
+        const deleteIcon = document.createElement('span');
+        deleteIcon.innerHTML = '&#10006;'; // Caractère "X"
+        deleteIcon.className = 'delete-icon';
+        deleteIcon.onclick = (e) => {
+            e.stopPropagation(); // Empêche le déclenchement de l'événement sur la ligne
+            showConfirmDialog(row.dataset.key);
+        };
+        row.querySelector('td:first-child').appendChild(deleteIcon);
+    });
+}
+
+// Modifier la fonction showConfirmDialog pour utiliser la clé Firebase
+function showConfirmDialog(key) {
+    const dialog = document.createElement('div');
+    dialog.className = 'confirm-dialog';
+    dialog.innerHTML = `
+        <p>Êtes-vous sûr de vouloir supprimer cette entrée ?</p>
+        <button id="confirmDelete">Confirmer</button>
+        <button id="cancelDelete">Annuler</button>
+    `;
+    document.body.appendChild(dialog);
+
+    document.getElementById('confirmDelete').onclick = () => {
+        deleteEntry(key);
+        document.body.removeChild(dialog);
+    };
+    document.getElementById('cancelDelete').onclick = () => {
+        document.body.removeChild(dialog);
+    };
 }
 
 function setupSearch() {
