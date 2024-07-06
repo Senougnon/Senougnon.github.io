@@ -15,7 +15,9 @@ firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 const loginForm = document.getElementById('loginForm');
+const signupForm = document.getElementById('signupForm');
 const loginContainer = document.getElementById('loginContainer');
+const signupContainer = document.getElementById('signupContainer');
 const dashboardContainer = document.getElementById('dashboardContainer');
 const salesForm = document.getElementById('salesForm');
 const salesTable = document.getElementById('salesTable');
@@ -26,6 +28,8 @@ const toggleAnalysisButton = document.getElementById('toggleAnalysisButton');
 const toggleSalesButton = document.getElementById('toggleSalesButton');
 const analysisSection = document.getElementById('analysisSection');
 const salesDetailsSection = document.getElementById('salesDetailsSection');
+const signupButton = document.getElementById('signupButton');
+const loginFromSignup = document.getElementById('loginFromSignup');
 let salesChart;
 let currentUser;
 let salesData = [];
@@ -70,11 +74,26 @@ loginForm.addEventListener('submit', function(e) {
                 alert('Mot de passe incorrect');
             }
         } else {
-            // New user, create account
+            alert('Utilisateur introuvable');
+        }
+    });
+});
+
+signupForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = document.getElementById('signupUsername').value;
+    const password = document.getElementById('signupPassword').value;
+
+    database.ref('users/' + username).once('value').then((snapshot) => {
+        if (snapshot.exists()) {
+            alert('Ce nom d\'utilisateur est déjà utilisé.');
+        } else {
             database.ref('users/' + username).set({
                 password: password
             }).then(() => {
-                loginSuccess(username);
+                alert('Inscription réussie ! Connectez-vous.');
+                signupContainer.style.display = 'none';
+                loginContainer.style.display = 'block';
             }).catch((error) => {
                 console.error('Error creating user:', error);
                 alert('Erreur lors de la création du compte');
@@ -83,9 +102,20 @@ loginForm.addEventListener('submit', function(e) {
     });
 });
 
+signupButton.addEventListener('click', function() {
+    loginContainer.style.display = 'none';
+    signupContainer.style.display = 'block';
+});
+
+loginFromSignup.addEventListener('click', function() {
+    signupContainer.style.display = 'none';
+    loginContainer.style.display = 'block';
+});
+
 function loginSuccess(username) {
     currentUser = username;
     loginContainer.style.display = 'none';
+    signupContainer.style.display = 'none';
     dashboardContainer.style.display = 'block';
     userInfoElement.textContent = `Utilisateur: ${username}`;
     updateTable();
@@ -302,7 +332,7 @@ function addDeleteIcons() {
     const rows = salesTable.querySelectorAll('tbody tr');
     rows.forEach((row) => {
         const deleteIcon = document.createElement('span');
-        deleteIcon.innerHTML = '&#10006;'; // Caractère "X"
+        deleteIcon.innerHTML = '✖'; // Caractère "X"
         deleteIcon.className = 'delete-icon';
         deleteIcon.onclick = (e) => {
             e.stopPropagation(); // Empêche le déclenchement de l'événement sur la ligne
@@ -572,6 +602,8 @@ document.getElementById('filterSalesDates').addEventListener('click', function()
     renderTable(filteredData);
     updateAnalysis(filteredData);
 });
+
+// ... (Code précédent)
 
 function updateStockTables(startDate, endDate) {
     const tables = {
