@@ -356,3 +356,31 @@ tbody tr:hover {
 .confirm-dialog button {
     margin-right: 10px;
 }
+.export-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 1000;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.export-button:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Assurer la visibilité du bouton sur les petits écrans */
+@media (max-width: 768px) {
+    .export-button {
+        bottom: 10px;
+        right: 10px;
+        padding: 8px 16px;
+        font-size: 0.9em;
+    }
+}

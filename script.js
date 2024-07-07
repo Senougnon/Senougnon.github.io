@@ -244,6 +244,25 @@ function updateStockTables() {
     });
 }
 
+// Fonction pour exporter les données vers Excel
+function exportToExcel() {
+    // Créer un nouveau classeur
+    const wb = XLSX.utils.book_new();
+    
+    // Convertir les données du tableau en une feuille de calcul
+    const ws = XLSX.utils.table_to_sheet(document.getElementById('salesTable'));
+    
+    // Ajouter la feuille au classeur
+    XLSX.utils.book_append_sheet(wb, ws, "Ventes");
+    
+    // Générer le fichier Excel et le télécharger
+    XLSX.writeFile(wb, "ventes_wifi_zone.xlsx");
+}
+
+// Ajouter un écouteur d'événements au bouton d'exportation
+document.getElementById('exportExcel').addEventListener('click', exportToExcel);
+
+
 // Fonction pour supprimer une entrée et actualiser les données
 function deleteEntry(key) {
     database.ref(`sales/${currentUser}/${key}`).once('value')
